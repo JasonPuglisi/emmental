@@ -1,0 +1,9 @@
+version: '3'
+services:
+  nginx_web:
+    image: httpd:latest
+    container_name: httpd_web
+    volumes:
+    - ./public/:/usr/local/apache2/htdocs/
+    ports:
+    - 80:80
