@@ -7,3 +7,21 @@ services:
     - ./config/nginx/proxy.conf:/etc/nginx/conf.d/default.conf
     ports:
     - 80:80
+    networks:
+    - emmental_network
+  mariadb_database:
+    image: mariadb:latest
+    container_name: mariadb_database
+    environment:
+      MYSQL_ROOT_PASSWORD: securerootpassword
+      MYSQL_DATABASE: emmental
+      MYSQL_USER: databaseuser
+      MYSQL_PASSWORD: securedatabasepassword
+    volumes:
+      - ./config/mariadb/emmental_database.sql:/docker-entrypoint-initdb.d/emmental_database.sql
+    ports:
+      - '3306'
+    networks:
+    - emmental_network
+networks:
+  emmental_network:
