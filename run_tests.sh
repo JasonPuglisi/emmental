@@ -9,7 +9,7 @@ docker-compose up -d
 sleep 5
 
 # Set MariaDB internal IP address
-export MARIADB_IP=`docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mariadb_database`
+export MARIADB_IP=`docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mariadb`
 
 # Install dependencies and run tests
 pip3 install -r tests/requirements.txt

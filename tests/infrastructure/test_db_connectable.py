@@ -28,7 +28,7 @@ class TestClass(object):
     cursor.execute(query)
     results = 0
     for result in cursor:
-        results += 1
+      results += 1
     assert results == 1
     dbconnection.close()
   def test_db_deletion(self):
@@ -42,6 +42,7 @@ class TestClass(object):
     cursor.execute(query)
     results = 0
     for result in cursor:
-        results += 1
+      results += 1
     assert results == 0
     dbconnection.close()
+  

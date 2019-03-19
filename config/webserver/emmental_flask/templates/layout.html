@@ -1,0 +1,19 @@
+<!doctype html>
+<title>Emmental</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="/static/style.css">
+<div class="navbar">
+  <a href="#">Home</a>
+  <a href="#">Settings</a>
+  <a href="#">Search</a>
+</div>
+{% block body %}{% endblock %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}

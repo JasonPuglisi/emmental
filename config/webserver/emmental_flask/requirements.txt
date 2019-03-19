@@ -1,4 +1,4 @@
+Flask
 mysql_connector
-requests-html
 bcrypt
-flask
+flask-login

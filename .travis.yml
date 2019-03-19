@@ -6,7 +6,7 @@ services:
 before_install:
 - docker-compose up -d
 - sleep 5
-- export MARIADB_IP=`docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mariadb_database`
+- export MARIADB_IP=`docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' mariadb`
 install:
 - pip install -r tests/requirements.txt
 script:

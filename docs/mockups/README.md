@@ -6,4 +6,3 @@ document in Sketch.
 
 If you do not have Sketch, view the document and interact with the prototype
 for free in Sketch Cloud at https://sketch.cloud/s/3PMqj.
-
