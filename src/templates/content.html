@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<section class="content">
+  <div class="container">
+    <img class="logo" src="/static/images/logo.svg" alt="Emmental Logo">
+    <div class="user-buttons">
+      <a href="/logout">
+        <button class="logout-button" type="button">Logout</button>
+      </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for message in messages %}
+      <p>{{ message|safe }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+  </div>
+{% endblock %}

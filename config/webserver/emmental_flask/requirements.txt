@@ -1,4 +1,0 @@
-Flask
-mysql_connector
-bcrypt
-flask-login

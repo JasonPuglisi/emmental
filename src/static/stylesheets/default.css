@@ -1,0 +1,131 @@
+/* External imports */
+
+@import url('/static/stylesheets/reset.css');
+@import url('/static/stylesheets/external.css');
+
+/* Universal styles */
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: #1f1f1f;
+  color: #f7f7f7;
+  font-family: 'Open Sans', 'Trebuchet MS', 'Verdana', 'Arial', sans-serif;
+  font-size: 1em;
+  font-weight: 400;
+}
+
+a, a:active, a:visited {
+  color: #e50914;
+  text-decoration: none;
+  transition: color 0.2s linear;
+}
+
+a:hover {
+  color: #e45c63;
+  cursor: pointer;
+  transition: color 0s;
+}
+
+::selection {
+  background: #d78589;
+}
+
+.hidden {
+  display: none;
+}
+
+button {
+  background-color: rgba(100, 6, 11, 0.14);
+  border-color: #64060b;
+  border-radius: 8px;
+  border-style: solid;
+  border-width: 2px;
+  color: #f7f7f7;
+  font-family: 'Open Sans', 'Trebuchet MS', 'Verdana', 'Arial', sans-serif;
+  font-size: 1em;
+  font-weight: 400;
+}
+
+button.active {
+  background-color: #e50914;
+}
+
+label {
+  font-size: 0.8em;
+  margin-bottom: 0.3em;
+  text-transform: uppercase;
+}
+
+input {
+  background-color: transparent;
+  border-color: #f7f7f7;
+  border-radius: 0px;
+  border-style: none none solid none;
+  border-width: 0.1em;
+  color: #f7f7f7;
+  font-family: 'Open Sans', 'Trebuchet MS', 'Verdana', 'Arial', sans-serif;
+  font-size: 1em;
+  font-weight: 400; 
+  margin-bottom: 0.5em;
+}
+
+/* Layout styles */
+
+section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+section.landing {
+  background-image: url('/static/images/backgrounds/theater.jpg');
+  background-position: center;
+  background-size: cover;
+  height: 100%;
+}
+
+section.content {
+  height: 100%;
+}
+
+section .container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 10vw;
+  margin-right: 10vw;
+  width: 80vw;
+}
+
+section .container.credentials {
+  min-height: 50vh;
+}
+
+.user-buttons {
+  margin: 1em 0;
+}
+
+.user-buttons button {
+  margin-right: 1em;
+}
+
+.user-buttons button:last-of-type {
+  margin-right: 0;
+}
+
+.signup-form, .login-form {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  margin-top: 2em;
+  padding: 1em;
+}
+
+/* Image styles */
+
+.logo {
+  width: 25vw;
+}

@@ -1,4 +1,5 @@
-mysql_connector
-requests-html
 bcrypt
 flask
+mysql_connector
+pylint
+requests-html

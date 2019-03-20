@@ -9,23 +9,26 @@ services:
       - MYSQL_USER=databaseuser
       - MYSQL_PASSWORD=securedatabasepassword
     volumes:
-      - ./config/mariadb/emmental_database.sql:/docker-entrypoint-initdb.d/emmental_database.sql
+      - ./config/mariadb/emmental.sql:/docker-entrypoint-initdb.d/emmental.sql
     ports:
       - '3306'
     networks:
       emmental_network:
         ipv4_address: 10.0.0.10
-  flask_web_app:
-    build: ./config/webserver/
-    command: python -m flask run --host=flask_web_app
-    container_name: flask_web_app
+  flask_web:
+    build: ./config/flask/web/
+    command: python -m flask run --host=flask_web
+    container_name: flask_web
     environment:
       - MARIADB_IP=10.0.0.10
+      - MARIADB_DATABASE=emmental
+      - MARIADB_USER=databaseuser
+      - MARIADB_PASSWORD=securedatabasepassword
       - FLASK_APP=app.py
       - FLASK_ENV=development
     volumes:
-      - ./config/webserver/emmental_flask/:/srv/emmental_flask/
-    working_dir: /srv/emmental_flask/
+      - ./src/:/srv/flask_web/
+    working_dir: /srv/flask_web/
     ports:
       - '5000'
     depends_on:
@@ -41,7 +44,7 @@ services:
     ports:
       - '80:80'
     depends_on:
-    - flask_web_app
+      - flask_web
     networks:
       emmental_network:
         ipv4_address: 10.0.0.30

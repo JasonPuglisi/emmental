@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<section class="landing">
+  <div class="container">
+    <img class="logo" src="/static/images/logo.svg" alt="Emmental Logo">
+    <div class="user-buttons">
+      <a href="#" onclick="toggleSignup(); return false;">
+        <button class="signup-button" type="button">Sign Up</button>
+      </a>
+      <a href="#" onclick="toggleLogin(); return false;">
+        <button class="login-button" type="button">Log In</button>
+      </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for message in messages %}
+      <p>{{ message|safe }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+  </div>
+  <div class="container credentials">
+    <form class="login-form hidden" action="/login" method="post">
+      <p><label for="username">Username</label></p>
+      <p><input name="username" id="username" required></p>
+      <p><label for="password">Password</label></p>
+      <p><input type="password" name="password" id="password" required></p>
+      <p><a href="#" onclick="submitLogin(); return false;">
+          <span class="login-proceed">
+            Log into my account
+            <i class="fas fa-chevron-right"></i>
+          </span>
+        </a></p>
+      <input class="hidden" type="submit">
+    </form>
+
+    <form class="signup-form hidden" action="/signup" method="post">
+      <p><label for="username">Username</label></p>
+      <p><input name="username" id="username" required></p>
+      <p><label for="password">Password</label></p>
+      <p><input type="password" name="password" id="password" required></p>
+      <p><a href="#" onclick="submitSignup(); return false;">
+          <span class="signup-proceed">
+            Create my account
+            <i class="fas fa-chevron-right"></i>
+          </span>
+        </a></p>
+      <input class="hidden" type="submit">
+    </form>
+  </div>
+</section>
+{% endblock %}
+
+{% block javascripts %}
+<script src="/static/javascripts/landing.js"></script>
+{% endblock %}
