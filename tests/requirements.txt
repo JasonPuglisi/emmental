@@ -1,5 +1,7 @@
 bcrypt
+bs4
 flask
 mysql_connector
 pylint
+pytest
 requests-html

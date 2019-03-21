@@ -18,21 +18,21 @@ class User(UserMixin):
 
 def is_valid_username(username):
     """Ensure username meets requirements. Returns True if successful."""
-    return username and username.isalnum() and len(username) <= 30
+    return bool(username and username.isalnum() and len(username) <= 30)
 
 
 def is_valid_password(username, password):
     """Ensure password meets requirements. Returns True if successful."""
-    return (password and username.lower() not in password.lower() and
-            len(password) <= 72)
+    return bool(password and username.lower() not in password.lower() and
+                len(password) <= 72)
 
 
 def is_correct_credential_pair(username, password):
     """Ensure username and password are valid/correct. Returns True if
        successful."""
-    return (is_valid_username(username) and
-            is_valid_password(username, password) and
-            is_valid_credential_pair_db(username, password))
+    return bool(is_valid_username(username) and
+                is_valid_password(username, password) and
+                is_valid_credential_pair_db(username, password))
 
 
 def is_user_created(username):

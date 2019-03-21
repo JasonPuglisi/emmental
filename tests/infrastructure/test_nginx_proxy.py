@@ -4,6 +4,6 @@ import requests
 
 
 def test_connectable():
-    """Ensures the machine can connect to NGINX."""
+    """Ensure the machine can connect to NGINX."""
     response = requests.get('http://localhost/', timeout=3)
     assert response.status_code == 200

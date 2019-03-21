@@ -29,7 +29,8 @@ def is_valid_credential_pair_db(username, password):
                    (username,))
     result = cursor.fetchall()
     close_db(connection)
-    return result and bcrypt.checkpw(password.encode(), result[0][0].encode())
+    return bool(result and
+                bcrypt.checkpw(password.encode(), result[0][0].encode()))
 
 
 def is_user_created_db(username):
