@@ -1,9 +1,12 @@
 """Test user handling functionality."""
 
+import uuid
+import bcrypt
 import pytest
-from src.user import (create_user, is_correct_credential_pair, is_user_created,
-                      is_valid_password, is_valid_username, User)
-from .test_db import (arrange_users, prepare_create_user_db,  # pylint: disable=unused-import
+from src.user import (create_user, get_user_id, is_correct_credential_pair,
+                      is_user_created, is_valid_password, is_valid_username,
+                      User)
+from .test_db import (arrange_users, create_user_db, prepare_create_user_db,  # pylint: disable=unused-import
                       TEST_CREDENTIAL_PAIRS, TEST_USERS)
 
 
@@ -63,3 +66,12 @@ def test_create_user_db(prepare_create_user):
     password = TEST_USERS[0][1]
     create_user(username, password)
     assert is_user_created(username)
+
+
+def test_get_user_id(prepare_create_user):
+    """Ensure user ID is properly fetched from database for a user."""
+    user_id = uuid.uuid4()
+    username = prepare_create_user
+    password_hash = bcrypt.hashpw(TEST_USERS[0][1].encode(), bcrypt.gensalt())
+    create_user_db(user_id.bytes, username, password_hash)
+    assert get_user_id(username) == user_id

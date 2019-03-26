@@ -54,3 +54,44 @@ def create_user_db(user_id, username, password_hash):
     connection.commit()
     close_db(connection)
     return is_user_created_db(username)
+
+
+def get_user_id_db(username):
+    """Get a user ID from a username."""
+    connection = connect_db()
+    cursor = connection.cursor(buffered=True)
+    cursor.execute('SELECT userID from Users WHERE username=%s', (username,))
+    result = cursor.fetchall()
+    close_db(connection)
+    return bytes(result[0][0])
+
+
+def save_video_db(video_id, user_id, extension):
+    """Save a video reference to the database."""
+    connection = connect_db()
+    connection.cursor().execute(
+        'INSERT INTO Content (contentID, extension, userID) VALUES (%s, %s, %s)',
+        (video_id, user_id, extension))
+    connection.commit()
+    close_db(connection)
+    return True
+
+
+def delete_video_db(video_id):
+    """Delete a video reference from the database."""
+    connection = connect_db()
+    connection.cursor().execute('DELETE FROM Content WHERE contentID=%s',
+                                (video_id,))
+    connection.commit()
+    close_db(connection)
+    return True
+
+
+def get_video_list_db():
+    """Get a list of all videos saved to the database."""
+    connection = connect_db()
+    cursor = connection.cursor(buffered=True)
+    cursor.execute('SELECT contentID, extension, userID from Content')
+    result = cursor.fetchall()
+    close_db(connection)
+    return result

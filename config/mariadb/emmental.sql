@@ -9,9 +9,8 @@ CREATE TABLE Users(
 );
 CREATE TABLE Content(
   contentID BINARY(16) NOT NULL,
+  extension VARCHAR(10) NOT NULL,
   userID BINARY(16) NOT NULL,
-  filepath VARCHAR(255) NOT NULL,
-  creation_date TIMESTAMP NOT NULL,
   CONSTRAINT content_pk PRIMARY KEY (contentID)
 );
 CREATE TABLE Logs(

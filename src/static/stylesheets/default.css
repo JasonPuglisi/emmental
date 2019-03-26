@@ -33,6 +33,18 @@ a:hover {
   background: #d78589;
 }
 
+h1 {
+  font-size: 2em;
+  font-weight: 400;
+  margin: 1em 0 0.5em 0;
+}
+
+h2 {
+  font-size: 1.5em;
+  font-weight: 400;
+  margin: 0.8em 0 0.35em 0;
+}
+
 .hidden {
   display: none;
 }
@@ -44,6 +56,7 @@ button {
   border-style: solid;
   border-width: 2px;
   color: #f7f7f7;
+  cursor: pointer;
   font-family: 'Open Sans', 'Trebuchet MS', 'Verdana', 'Arial', sans-serif;
   font-size: 1em;
   font-weight: 400;
@@ -59,7 +72,7 @@ label {
   text-transform: uppercase;
 }
 
-input {
+input:not([type="file"]):not([type="submit"]) {
   background-color: transparent;
   border-color: #f7f7f7;
   border-radius: 0px;
@@ -77,7 +90,7 @@ input {
 section {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  padding-top: 3em;
 }
 
 section.landing {
@@ -85,6 +98,7 @@ section.landing {
   background-position: center;
   background-size: cover;
   height: 100%;
+  justify-content: center;
 }
 
 section.content {
@@ -92,13 +106,16 @@ section.content {
 }
 
 section .container {
-  align-items: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin-left: 10vw;
   margin-right: 10vw;
   width: 80vw;
+}
+
+section.landing .container {
+  align-items: center;
 }
 
 section .container.credentials {
@@ -122,6 +139,22 @@ section .container.credentials {
   border-radius: 8px;
   margin-top: 2em;
   padding: 1em;
+}
+
+.flash-error, .flash-success {
+  padding: 1em 0;
+}
+
+.flash-error {
+  color: #f77a7a;
+}
+
+.flash-success {
+  color:  #7af782;
+}
+
+.video {
+  margin: 1em 0;
 }
 
 /* Image styles */

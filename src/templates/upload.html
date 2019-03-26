@@ -8,7 +8,7 @@
     </a>
     <div class="user-buttons">
       <a href="/upload">
-        <button class="upload-button" type="button">Upload</button>
+        <button class="upload-button active" type="button">Upload</button>
       </a>
       <a href="/logout">
         <button class="logout-button" type="button">Logout</button>
@@ -25,24 +25,16 @@
     {% endif %}
     {% endwith %}
 
-    <h1>Video Index</h1>
+    <h1>Upload a Video</h1>
 
-    {% if videos %}
-    <div class="videos">
-      {% for video in videos %}
-      <div class="video">
-        <p><a href="/video/{{ video.video_id }}.{{ video.extension }}">
-            View static file
-          </a></p>
-        <p>Video ID: {{ video.video_id }}</p>
-        <p>Video Extension: {{ video.extension }}</p>
-        <p>User ID: {{ video.user_id }}</p>
-      </div>
-      {% endfor %}
+    <h2>Select a File</h2>
+
+    <div class="video-uploads">
+      <form action="/upload" enctype="multipart/form-data" method="post">
+        <input type="file" name="video">
+        <input type="submit"></submit>
+      </form>
     </div>
-    {% else %}
-    <h2>No videos uploaded.</h2>
-    {% endif %}
   </div>
 </section>
 {% endblock %}

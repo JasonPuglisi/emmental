@@ -3,7 +3,8 @@
 import uuid
 import bcrypt
 from flask_login import UserMixin
-from .db import create_user_db, is_user_created_db, is_valid_credential_pair_db
+from .db import (create_user_db, get_user_id_db, is_user_created_db,
+                 is_valid_credential_pair_db)
 
 
 class User(UserMixin):
@@ -49,3 +50,9 @@ def create_user(username, password):
         password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
         return create_user_db(user_id, username, password_hash)
     return False
+
+
+def get_user_id(username):
+    """Get a user ID from a username."""
+    user_id = get_user_id_db(username)
+    return uuid.UUID(bytes=user_id)
