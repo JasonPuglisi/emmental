@@ -7,6 +7,9 @@
       <img class="logo" src="/static/images/logo.svg" alt="Emmental Logo">
     </a>
     <div class="user-buttons">
+      <a href="/">
+        <button class="videos-button active" type="button">Videos</button>
+      </a>
       <a href="/upload">
         <button class="upload-button" type="button">Upload</button>
       </a>
@@ -31,8 +34,8 @@
     <div class="videos">
       {% for video in videos %}
       <div class="video">
-        <p><a href="/video/{{ video.video_id }}.{{ video.extension }}">
-            View static file
+        <p><a href="/view/{{ video.video_id }}.{{ video.extension }}">
+            Play Video!
           </a></p>
         <p>Video ID: {{ video.video_id }}</p>
         <p>Video Extension: {{ video.extension }}</p>

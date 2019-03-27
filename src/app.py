@@ -6,7 +6,7 @@ from flask_login import (current_user, LoginManager, login_required,
                          login_user, logout_user)
 from .user import (create_user, is_correct_credential_pair, is_user_created,
                    is_valid_username, is_valid_password, User)
-from .video import get_video_list, is_valid_filename, Video
+from .video import get_extension, get_video_list, is_valid_filename, Video
 
 APP = Flask(__name__)
 
@@ -122,3 +122,10 @@ def upload():
 def static_video(filename):
     """Serve static video file."""
     return send_from_directory(APP.upload_folder, filename)
+
+@APP.route('/view/<path:videopath>')
+@login_required
+def video_player_page(videopath):
+    """Serve video player page to user"""
+    extension = get_extension(videopath)
+    return render_template('video_player.html', video=videopath, ext=extension)

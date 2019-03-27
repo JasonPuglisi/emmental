@@ -153,6 +153,11 @@ section .container.credentials {
   color:  #7af782;
 }
 
+video {
+  height: 60vh;
+  width: 80vw;
+}
+
 .video {
   margin: 1em 0;
 }
