@@ -1,5 +1,8 @@
 """Base web application functionality."""
 
+import ipaddress
+import re
+import requests
 from flask import (flash, Flask, redirect, render_template, request,
                    send_from_directory, url_for)
 from flask_login import (current_user, LoginManager, login_required,
@@ -90,31 +93,93 @@ def logout():
     return redirect(url_for('index'))
 
 
-@APP.route('/upload', methods=['GET', 'POST'])
+@APP.route('/upload', methods=['GET'])
 @login_required
 def upload():
     """Allow user to upload videos via local file and URL."""
-    if request.method == 'POST':
-        if 'video' not in request.files:
-            return redirect(url_for('upload'))
-
-        file = request.files['video']
-        if not file or file.filename == '':
-            flash('<span class="flash-error">No video selected.</span>')
-            return redirect(url_for('upload'))
-
-        filename = file.filename
-        if not is_valid_filename(filename):
-            flash('<span class="flash-error">Invalid file selected.</span>')
-            return redirect(url_for('upload'))
-
-        video = Video()
-        video.create(filename, current_user.user_id)
-        video.save()
-        file.save(video.get_path(APP.upload_folder))
-        flash('<span class="flash-success">Video uploaded successfully.</span>')
-        return redirect(url_for('index'))
     return render_template('upload.html')
+
+
+@APP.route('/upload/file', methods=['POST'])
+@login_required
+def upload_file():
+    """Handle local file upload if provided."""
+    no_file = '<span class="flash-error">No file selected.</span>'
+    if 'video' not in request.files:
+        flash(no_file)
+        return redirect(url_for('upload'))
+
+    file = request.files['video']
+    if not file or file.filename == '':
+        flash(no_file)
+        return redirect(url_for('upload'))
+
+    filename = file.filename
+    if not is_valid_filename(filename):
+        flash('<span class="flash-error">Invalid file selected.</span>')
+        return redirect(url_for('upload'))
+
+    video = Video()
+    video.create(filename, current_user.user_id)
+    video.save()
+    file.save(video.get_path(APP.upload_folder))
+    flash('<span class="flash-success">Video uploaded successfully.</span>')
+    return redirect(url_for('index'))
+
+
+@APP.route('/upload/url', methods=['POST'])
+@login_required
+def upload_url():
+    """Handle URL upload if provided."""
+    no_url = '<span class="flash-error">No URL specified.</span>'
+    url = request.form['url'] if 'url' in request.form else ''
+    if not url:
+        flash(no_url)
+        return redirect(url_for('upload'))
+
+    invalid_url = '<span class="flash-error">Invalid URL specified.<span>'
+    pattern = re.compile(r'^(http(?:s)?):\/\/(.*?)(?::(\d{0,5}))?(\/[^\?]*)?(?:\?(.*))?$',
+                         re.IGNORECASE)
+    result = pattern.match(url)
+
+    if not url or not result:
+        flash(invalid_url)
+        return redirect(url_for('upload'))
+
+    #protocol = result.group(1)
+    host = result.group(2)
+    #port = result.group(3)
+    path = result.group(4)
+    parameters = result.group(5)
+
+    # Ensure host is not just an IP address (should throw exception)
+    try:
+        ipaddress.ip_address(host)
+        flash(invalid_url)
+        return redirect(url_for('upload'))
+    except ValueError:
+        pass
+
+    if host.lower() == 'localhost' or '.' not in host:
+        flash(invalid_url)
+        return redirect(url_for('upload'))
+
+    video = Video()
+    if path and get_extension(path):
+        video.create(path, current_user.user_id)
+    elif parameters and get_extension(parameters):
+        video.create(parameters, current_user.user_id)
+    else:
+        flash(invalid_url)
+        return redirect(url_for('upload'))
+
+    video.save()
+    response = requests.get(url)
+    with open(video.get_path(APP.upload_folder), 'wb') as file:
+        file.write(response.content)
+
+    flash('<span class="flash-success">Video uploaded successfully.</span>')
+    return redirect(url_for('index'))
 
 
 @APP.route('/video/<path:filename>')
@@ -122,6 +187,7 @@ def upload():
 def static_video(filename):
     """Serve static video file."""
     return send_from_directory(APP.upload_folder, filename)
+
 
 @APP.route('/view/<path:videopath>')
 @login_required

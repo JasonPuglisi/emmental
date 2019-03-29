@@ -2,3 +2,4 @@ bcrypt
 Flask
 flask-login
 mysql_connector
+requests

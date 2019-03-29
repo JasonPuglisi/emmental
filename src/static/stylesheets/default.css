@@ -162,6 +162,10 @@ video {
   margin: 1em 0;
 }
 
+.video-uploads form {
+  margin: 1em 0;
+}
+
 /* Image styles */
 
 .logo {
