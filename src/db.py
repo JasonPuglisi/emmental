@@ -63,15 +63,18 @@ def get_user_id_db(username):
     cursor.execute('SELECT userID from Users WHERE username=%s', (username,))
     result = cursor.fetchall()
     close_db(connection)
+    # catches empty results
+    if not result:
+        return ""
     return bytes(result[0][0])
 
 
-def save_video_db(video_id, user_id, extension):
+def save_video_db(video_id, extension, user_id):
     """Save a video reference to the database."""
     connection = connect_db()
     connection.cursor().execute(
         'INSERT INTO Content (contentID, extension, userID) VALUES (%s, %s, %s)',
-        (video_id, user_id, extension))
+        (video_id, extension, user_id))
     connection.commit()
     close_db(connection)
     return True
@@ -91,7 +94,18 @@ def get_video_list_db():
     """Get a list of all videos saved to the database."""
     connection = connect_db()
     cursor = connection.cursor(buffered=True)
-    cursor.execute('SELECT contentID, extension, userID from Content')
+    cursor.execute('SELECT contentID, extension, userID FROM Content')
     result = cursor.fetchall()
     close_db(connection)
     return result
+
+def get_user_id_from_video(video_id):
+    """Get user id (creator) based on the video_id """
+    connection = connect_db()
+    cursor = connection.cursor(buffered=True)
+    cursor.execute('SELECT userID FROM Content WHERE contentID=%s', (video_id,))
+    result = cursor.fetchall()
+    close_db(connection)
+    #returns the user_id, which is in row 0, column zero of result
+    return bytes(result[0][0])
+    

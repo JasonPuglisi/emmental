@@ -54,5 +54,7 @@ def create_user(username, password):
 
 def get_user_id(username):
     """Get a user ID from a username."""
+    if not username or username == (' '):
+        return ""
     user_id = get_user_id_db(username)
     return uuid.UUID(bytes=user_id)

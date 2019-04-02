@@ -29,7 +29,6 @@
     {% endwith %}
 
     <h1>Video Index</h1>
-
     {% if videos %}
     <div class="videos">
       {% for video in videos %}
@@ -40,6 +39,11 @@
         <p>Video ID: {{ video.video_id }}</p>
         <p>Video Extension: {{ video.extension }}</p>
         <p>User ID: {{ video.user_id }}</p>
+        {% if signed_in == video.user_id %}
+        <a href="/delete/{{ video.video_id }}.{{ video.extension }}">
+          <button class="delete-button" type="button">Delete</button>
+        </a>
+        {% endif %}
       </div>
       {% endfor %}
     </div>

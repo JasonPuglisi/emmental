@@ -2,9 +2,8 @@
 
 import os
 import uuid
-from .db import delete_video_db, get_video_list_db, save_video_db
+from .db import delete_video_db, get_video_list_db, get_user_id_from_video, save_video_db
 from .user import get_user_id
-
 
 class Video():
     """Video object containing ID, extension, and uploader."""
@@ -67,3 +66,24 @@ def get_video_list():
         video.load(video_id, extension, user_id)
         videos.append(video)
     return videos
+
+def get_user_id_from_video_id(video_id):
+    """ Get user_id (creator) from a video_id (video) """
+    if video_id:
+        return uuid.UUID(bytes=get_user_id_from_video(uuid.UUID(video_id).bytes))
+    # If no video_id supplied, return empty string.
+    return ""
+
+def delete_select_video(selected_videopath):
+    """ Delete a video based on the video_id"""
+    # Requirement: Should only be run after checking that requester is owner of video.
+    if selected_videopath:
+        spliter = selected_videopath.split(".")
+        select_video_id = spliter[0]
+        # Deletes video entry in DB
+        delete_video_db(uuid.UUID(select_video_id).bytes)
+        # Deletes video from disk
+        try:
+            os.remove('/srv/videos/'+selected_videopath)
+        except OSError:
+            pass

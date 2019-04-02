@@ -7,9 +7,10 @@ from flask import (flash, Flask, redirect, render_template, request,
                    send_from_directory, url_for)
 from flask_login import (current_user, LoginManager, login_required,
                          login_user, logout_user)
-from .user import (create_user, is_correct_credential_pair, is_user_created,
+from .user import (create_user, get_user_id, is_correct_credential_pair, is_user_created,
                    is_valid_username, is_valid_password, User)
-from .video import get_extension, get_video_list, is_valid_filename, Video
+from .video import (delete_select_video, get_extension, get_user_id_from_video_id,
+                    get_video_list, is_valid_filename, Video)
 
 APP = Flask(__name__)
 
@@ -34,7 +35,9 @@ def index():
        unauthenticated."""
     if current_user.is_authenticated:
         # User is authenticated, present content page.
-        return render_template('content.html', videos=get_video_list())
+        # Get the current user's user_id, if its empty, send an empty string
+        active_user = str(get_user_id(current_user.user_id))
+        return render_template('content.html', videos=get_video_list(), signed_in=active_user)
 
     # User is unauthenticated, present landing/login page.
     return render_template('landing.html')
@@ -84,7 +87,6 @@ def login():
     flash('<span class="flash-error">Invalid username or password.</span>')
     return redirect(url_for('index'))
 
-
 @APP.route('/logout', methods=['GET'])
 @login_required
 def logout():
@@ -99,6 +101,28 @@ def upload():
     """Allow user to upload videos via local file and URL."""
     return render_template('upload.html')
 
+@APP.route('/delete/<path:videopath>')
+@login_required
+def delete_video(videopath):
+    """ Deletes a video if it was uploaded by the same user. """
+    if videopath:
+        # stores user_id derived from username
+        user_request_id = str(get_user_id(current_user.user_id))
+        # splitting filename from file extension
+        spliter = videopath.split(".")
+        # filename/videoID is first element in array spliter
+        video_id = spliter[0]
+        # gets owner/user_id from video selected for deletion
+        video_owner_id = str(get_user_id_from_video_id(video_id))
+        # Checking if user requesting to delete video also uploaded it
+        if user_request_id == video_owner_id:
+            delete_select_video(videopath)
+            flash('<span class="flash-success">Video deleted successfully.</span>')
+        else:
+            flash('<span class="flash-error">User can not delete this.</span>')
+    else:
+        flash('<span class="flash-error">No Video specified to delete.</span>')
+    return redirect(url_for('index'))
 
 @APP.route('/upload/file', methods=['POST'])
 @login_required

@@ -4,7 +4,8 @@ import uuid
 import bcrypt
 import pytest
 from src.db import (close_db, connect_db, create_user_db, is_user_created_db,
-                    is_valid_credential_pair_db)
+                    get_user_id_db, is_valid_credential_pair_db, save_video_db,
+                    delete_video_db)
 
 TEST_USERS = [
     ('User1', 'password1'),
@@ -89,3 +90,21 @@ def test_create_user_db(prepare_create_user):
     password_hash = bcrypt.hashpw(TEST_USERS[0][1].encode(), bcrypt.gensalt())
     create_user_db(user_id, username, password_hash)
     assert is_user_created_db(username)
+
+def test_get_user_id_db(prepare_create_user):
+    """Ensure that a username maps to a user_id correctly. """
+    user_id = uuid.uuid4().bytes
+    username = prepare_create_user
+    password_hash = bcrypt.hashpw(TEST_USERS[0][1].encode(), bcrypt.gensalt())
+    create_user_db(user_id, username, password_hash)
+    assert get_user_id_db(username) == user_id
+
+
+@pytest.mark.parametrize('video_id, user_id, extension, success', [
+    (uuid.uuid4().bytes, uuid.uuid4().bytes, 'mp4', True),
+    (uuid.uuid4().bytes, uuid.uuid4().bytes, 'ogg', True),
+])
+def test_save_video_db(video_id, user_id, extension, success):
+    """ Tests save_video_db() functionality """
+    assert save_video_db(video_id, extension, user_id) == success
+    assert delete_video_db(video_id) == success
