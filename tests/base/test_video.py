@@ -74,7 +74,8 @@ def test_get_video_list():
     video.save()
 
     videos = get_video_list()
-    returned = videos[0]
+    returned = videos[-1]
     assert (returned.video_id == str(video_id) and
             returned.extension == extension and
             returned.user_id == str(user_id))
+    video.delete()
