@@ -14,7 +14,7 @@
         <button class="upload-button" type="button">Upload</button>
       </a>
       <a href="/search">
-        <button class="search-button" type="button">Search</button>
+        <button class="search-button active" type="button">Search</button>
       </a>
       <a href="/logout">
         <button class="logout-button" type="button">Logout</button>
@@ -31,16 +31,20 @@
     {% endif %}
     {% endwith %}
 
-    <h1>Video Player:</h1>    
-    {% if video %}
-    <div class="videos">
-        <video controls>
-          <source src="/video/{{ video }}" type="video/{{ext}}">
-          Your browser does not support HTML5 Video.
-        </video>
-    </div>
+    <h1>Search</h1>
+
+    {% if results %}
+    <h2>Results:</h2>
+
+    <p>{{ results }}</p>
     {% else %}
-    <h2>Video not found.</h2>
+    <h2>Provide the start of a video ID and we'll find all the matches for
+      you!</h2>
+
+    <form action="/search" method="post">
+      <input type="text" name="query"><br>
+      <input type="submit">
+    </form>
     {% endif %}
   </div>
 </section>
