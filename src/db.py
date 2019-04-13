@@ -108,4 +108,22 @@ def get_user_id_from_video(video_id):
     close_db(connection)
     #returns the user_id, which is in row 0, column zero of result
     return bytes(result[0][0])
-    
+
+def db_query_usernames(query):
+    """ Get db query """
+    error = ['[X] User Not Found']
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+        cursor.execute("SELECT username FROM Users WHERE username = '%s';" % query)
+        results = cursor.fetchall()
+        close_db(connection)
+    except mysql.connector.Error:
+        return error
+    #returns the result of query from the database
+    usernames = []
+    for result in results:
+        usernames.append(result[0])
+    if usernames:
+        return usernames
+    return error

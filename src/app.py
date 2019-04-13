@@ -7,6 +7,7 @@ from flask import (flash, Flask, redirect, render_template, request,
                    send_from_directory, url_for)
 from flask_login import (current_user, LoginManager, login_required,
                          login_user, logout_user)
+from .db import db_query_usernames
 from .search import search_ls
 from .user import (create_user, get_user_id, is_correct_credential_pair, is_user_created,
                    is_valid_username, is_valid_password, User)
@@ -234,4 +235,16 @@ def search():
         results = search_ls(APP.upload_folder, query)
         return render_template('search.html', results=results)
 
+    return render_template('search.html')
+
+@APP.route('/search/users', methods=['GET', 'POST'])
+@login_required
+def search_for_users():
+    """Search for a username."""
+    if request.method == 'POST':
+        query = request.form['query'] if 'query' in request.form else ''
+        if query == '':
+            return redirect(url_for('search'))
+        user_results = db_query_usernames(query)
+        return render_template('search.html', user_results=user_results)
     return render_template('search.html')

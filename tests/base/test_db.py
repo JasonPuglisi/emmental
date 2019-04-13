@@ -5,7 +5,7 @@ import bcrypt
 import pytest
 from src.db import (close_db, connect_db, create_user_db, is_user_created_db,
                     get_user_id_db, is_valid_credential_pair_db, save_video_db,
-                    delete_video_db)
+                    delete_video_db, db_query_usernames)
 
 TEST_USERS = [
     ('User1', 'password1'),
@@ -108,3 +108,14 @@ def test_save_video_db(video_id, user_id, extension, success):
     """ Tests save_video_db() functionality """
     assert save_video_db(video_id, extension, user_id) == success
     assert delete_video_db(video_id) == success
+
+@pytest.mark.parametrize('username, response', [
+    (TEST_USERS[0][0], [TEST_USERS[0][0]]),
+    ('FakeUser', ['[X] User Not Found']),
+    ('', ['[X] User Not Found']),
+    ('\' or \'1\'=\'1', ['User1', 'User2', 'User3']),
+    ])
+def test_db_search_users(username, response):
+    """ Test that users are searchable in db """
+    arrange_users()
+    assert db_query_usernames(username) == response
