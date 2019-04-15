@@ -111,7 +111,6 @@ def test_authenticated_index(username, password, success):
     assert (not html.select('.container .user-buttons .login-button') ==
             success)
 
-
 @pytest.mark.parametrize('username, password, success', [
     (TEST_USERS[0], 'password', True),
     (TEST_USERS[0], 'password1', False)
@@ -133,3 +132,20 @@ def test_authenticated_logout(username, password, success):
     assert html.select('.container .user-buttons .signup-button')
     assert html.select('.container .user-buttons .login-button')
     assert not html.select('.container .user-buttons .logout-button')
+
+@pytest.mark.parametrize('username, password, user_to_check, return_msg', [
+    (TEST_USERS[0], 'password', TEST_USERS[0], 'User Exists!'),
+    (TEST_USERS[0], 'password', "abcd", 'NO'),
+    (TEST_USERS[0], 'password', TEST_USERS[0]+'\' OR \'1\'=\'1', 'User Exists!'),
+])
+def test_blind_sql_on_users_exist_page(username, password, user_to_check, return_msg):
+    """ Test that blind sql statements occur on /user-exist page """
+    session = requests.session()
+    session.post('http://localhost/login', timeout=3, data={
+        'username': username, 'password': password
+    })
+    response = session.get('http://localhost/', timeout=3)
+    url_request = 'http://localhost/user-check/' + user_to_check
+    response = session.get(url_request, timeout=3)
+    #html = BeautifulSoup(response.text, 'html.parser')
+    assert response.text == return_msg

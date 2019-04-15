@@ -1,9 +1,9 @@
 """Contains functionality for interfacing with the database."""
 
 import os
+import uuid
 import bcrypt
 import mysql.connector
-
 
 def connect_db():
     """Create a connection to MariaDB."""
@@ -110,7 +110,7 @@ def get_user_id_from_video(video_id):
     return bytes(result[0][0])
 
 def db_query_usernames(query):
-    """ Get db query """
+    """ Get db query for usernames"""
     error = ['[X] User Not Found']
     try:
         connection = connect_db()
@@ -127,3 +127,36 @@ def db_query_usernames(query):
     if usernames:
         return usernames
     return error
+
+def db_query_videos_by_username(query):
+    """Get videos list by username"""
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+        outer_stm = "SELECT contentID from Content where userID="
+        cursor.execute(outer_stm + "(SELECT userID FROM Users WHERE username = '%s');" % query)
+        video_list = cursor.fetchall()
+        close_db(connection)
+    except mysql.connector.Error:
+        return ["Database error"]
+    videos = []
+    for video in video_list:
+        byte_entry = bytes(video[0])
+        videos.append(uuid.UUID(bytes=byte_entry))
+    if videos:
+        return videos
+    return ["No Videos Found"]
+
+def db_does_user_exist_vulnerable(query):
+    """Check if user did upload video"""
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+        cursor.execute("SELECT userID, username from Users where username= '%s';" % query)
+        video_list = cursor.fetchall()
+        close_db(connection)
+    except mysql.connector.Error:
+        return ['Database Query Error']
+    if video_list:
+        return "User Exists!"
+    return "NO"

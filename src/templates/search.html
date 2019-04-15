@@ -31,7 +31,7 @@
     {% endif %}
     {% endwith %}
 
-    <h1>Search for Videos:</h1>
+    <h1>Search for Videos by Name:</h1>
 
     {% if results %}
     <h2>Results:</h2>
@@ -60,6 +60,23 @@
     <h2>Provide the name of a user uploading videos.</h2>
     {% endif %}
     <form action="/search/users" method="post">
+      <input type="text" name="query"><br>
+      <input type="submit">
+    </form>
+
+    <h1>Search for Videos by User:</h1>
+    {% if video_results %}
+    <p> Videos(s) uploaded by {{user_searched}}:</p>
+    {% for video in video_results %}
+    <br>
+    <ul>
+      <li> - {{ video|safe }} </li>
+    </ul>
+    {% endfor %}
+    {% else %}
+    <h2>Provide the name of a user who uploaded videos.</h2>
+    {% endif %}
+    <form action="/search/user-videos" method="post">
       <input type="text" name="query"><br>
       <input type="submit">
     </form>

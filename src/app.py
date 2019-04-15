@@ -7,7 +7,7 @@ from flask import (flash, Flask, redirect, render_template, request,
                    send_from_directory, url_for)
 from flask_login import (current_user, LoginManager, login_required,
                          login_user, logout_user)
-from .db import db_query_usernames
+from .db import db_query_usernames, db_query_videos_by_username, db_does_user_exist_vulnerable
 from .search import search_ls
 from .user import (create_user, get_user_id, is_correct_credential_pair, is_user_created,
                    is_valid_username, is_valid_password, User)
@@ -210,6 +210,14 @@ def upload_url():
     flash('<span class="flash-success">Video uploaded successfully.</span>')
     return redirect(url_for('index'))
 
+@APP.route('/user-check/<path:username>')
+@login_required
+def does_user_exist(username):
+    """Checks if username exists in the Users table of DB"""
+    result = (db_does_user_exist_vulnerable(username))
+    if result:
+        return result
+    return "ERROR"
 
 @APP.route('/video/<path:filename>')
 @login_required
@@ -247,4 +255,16 @@ def search_for_users():
             return redirect(url_for('search'))
         user_results = db_query_usernames(query)
         return render_template('search.html', user_results=user_results)
+    return render_template('search.html')
+
+@APP.route('/search/user-videos', methods=['GET', 'POST'])
+@login_required
+def search_for_user_videos_list():
+    """Search for a username."""
+    if request.method == 'POST':
+        query = request.form['query'] if 'query' in request.form else ''
+        if query == '':
+            return redirect(url_for('search'))
+        video_results = db_query_videos_by_username(query)
+        return render_template('search.html', video_results=video_results, user_searched=query)
     return render_template('search.html')
