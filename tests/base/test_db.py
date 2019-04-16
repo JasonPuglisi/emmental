@@ -117,5 +117,5 @@ def test_save_video_db(video_id, user_id, extension, success):
     ])
 def test_db_search_users(username, response):
     """ Test that users are searchable in db """
-    arrange_users()
-    assert db_query_usernames(username) == response
+    for item in response:
+        assert item in db_query_usernames(username)

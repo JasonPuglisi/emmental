@@ -1,6 +1,6 @@
 """Base web application functionality."""
 
-import ipaddress
+#import ipaddress
 import re
 import requests
 from flask import (flash, Flask, redirect, render_template, request,
@@ -171,29 +171,41 @@ def upload_url():
                          re.IGNORECASE)
     result = pattern.match(url)
 
-    if not url or not result:
-        flash(invalid_url)
-        return redirect(url_for('upload'))
-
     #protocol = result.group(1)
-    host = result.group(2)
+    #host = result.group(2)
     #port = result.group(3)
-    path = result.group(4)
-    parameters = result.group(5)
+    path = result.group(4) if result else ''
+    parameters = result.group(5) if result else ''
 
-    # Ensure host is not just an IP address (should throw exception)
-    try:
-        ipaddress.ip_address(host)
+    if not url:
         flash(invalid_url)
         return redirect(url_for('upload'))
-    except ValueError:
-        pass
 
-    if host.lower() == 'localhost' or '.' not in host:
-        flash(invalid_url)
-        return redirect(url_for('upload'))
+    ## Commented out to introduce SSRF vulnerability
+    #if not result:
+    #    flash(invalid_url)
+    #    return redirect(url_for('upload'))
+    #
+    ## Ensure host is not just an IP address (should throw exception)
+    #try:
+    #    ipaddress.ip_address(host)
+    #    flash(invalid_url)
+    #    return redirect(url_for('upload'))
+    #except ValueError:
+    #    pass
+    #
+    #if host.lower() == 'localhost' or '.' not in host:
+    #    flash(invalid_url)
+    #    return redirect(url_for('upload'))
 
     video = Video()
+    try:
+        response = requests.get(url)
+    except (requests.exceptions.InvalidSchema,
+            requests.exceptions.MissingSchema):
+        flash(invalid_url)
+        return redirect(url_for('upload'))
+
     if path and get_extension(path):
         video.create(path, current_user.user_id)
     elif parameters and get_extension(parameters):
@@ -203,7 +215,6 @@ def upload_url():
         return redirect(url_for('upload'))
 
     video.save()
-    response = requests.get(url)
     with open(video.get_path(APP.upload_folder), 'wb') as file:
         file.write(response.content)
 

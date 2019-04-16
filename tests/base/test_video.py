@@ -1,9 +1,11 @@
 """Tests video handling functionality."""
 
 import uuid
+import requests
 import pytest
+from bs4 import BeautifulSoup
 from src.video import get_extension, get_video_list, is_valid_filename, Video
-from .test_db import arrange_users, TEST_USERS  # pylint: disable=unused-import
+from .test_db import arrange_users, TEST_CREDENTIAL_PAIRS, TEST_USERS  # pylint: disable=unused-import
 
 
 @pytest.mark.parametrize('filename, extension, username', [
@@ -74,8 +76,48 @@ def test_get_video_list():
     video.save()
 
     videos = get_video_list()
-    returned = videos[-1]
-    assert (returned.video_id == str(video_id) and
-            returned.extension == extension and
-            returned.user_id == str(user_id))
+    found = False
+    for video in videos:
+        if (video.video_id == str(video_id) and
+                video.extension == extension and
+                video.user_id == str(user_id)):
+            found = True
+    assert found
     video.delete()
+
+
+def test_ssrf_get():
+    """Ensure internal resource cannot be accessed externally but can be
+    accessed through server side request forgery."""
+    # Attempt to access internal resource (should fail)
+    session = requests.session()
+    caught = False
+    try:
+        url = 'http://localhost:3000/status'
+        session.get(url)
+    except requests.exceptions.ConnectionError:
+        caught = True
+    assert caught
+
+    # Log into app
+    username = TEST_CREDENTIAL_PAIRS[0][0]
+    password = TEST_CREDENTIAL_PAIRS[0][1]
+    session.post('http://localhost/login', timeout=3, data={
+        'username': username, 'password': password
+    })
+
+    # Send internal resource URL to vidoe upload
+    url = 'http://nginx_proxy:3000/status?test=test.mp4'
+    response = session.post('http://localhost/upload/url', timeout=3, data={
+        'url': url
+    })
+
+    # Get uploaded video ID
+    html = BeautifulSoup(response.text, 'html.parser')
+    video_id = html.select('.videos .video p')[1].text.split(': ')[1]
+
+    # Ensure SSRF gained access to internal resource
+    expected = 'NGINX is running!'
+    url = f'http://localhost/video/{video_id}.mp4'
+    response = session.get(url)
+    assert response.text == expected

@@ -123,7 +123,8 @@ def db_query_usernames(query):
     #returns the result of query from the database
     usernames = []
     for result in results:
-        usernames.append(result[0])
+        if result[0].strip():
+            usernames.append(result[0])
     if usernames:
         return usernames
     return error
